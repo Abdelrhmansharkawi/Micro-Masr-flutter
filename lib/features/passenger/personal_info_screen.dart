@@ -57,14 +57,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         phone: _phoneController.text.trim(),
         email: _emailController.text.trim(),
       );
-      // If password fields are filled, change password too
+
       if (_currentPasswordController.text.isNotEmpty &&
           _newPasswordController.text.isNotEmpty) {
         await _userService.changePassword(
           currentPassword: _currentPasswordController.text,
           newPassword: _newPasswordController.text,
         );
-        // Clear password fields after success
+
         _currentPasswordController.clear();
         _newPasswordController.clear();
       }
@@ -124,7 +124,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             padding: EdgeInsets.all(20.aw),
             child: Column(
               children: [
-                // Profile Image Section (static for now, can be extended)
                 Center(
                   child: Stack(
                     children: [
@@ -156,7 +155,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                         start: 0,
                         child: GestureDetector(
                           onTap: () {
-                            // TODO: Implement image picker and upload
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
@@ -175,7 +173,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 ),
                 const VerticalSpace(32),
 
-                // Editable fields
                 AppTextField(
                   label: 'الاسم الكامل',
                   controller: _fullNameController,
@@ -201,7 +198,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
                 const VerticalSpace(32),
 
-                // Password change section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

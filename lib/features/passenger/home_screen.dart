@@ -40,18 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
         _error = null;
       });
 
-      // Check authentication state
       bool isLoggedIn = await AuthStateService.isLoggedIn();
 
       if (!isLoggedIn) {
-        // Guest mode: use guest user and fetch only public trips (if any)
         UserModel guestUser = UserModel.guest();
         List<TripModel> trips = [];
         try {
-          // If trips endpoint is public, fetch them; otherwise keep empty
           trips = await _tripService.getNearbyTrips(30.0444, 31.2357);
         } catch (_) {
-          // Ignore; trips will be empty
         }
         if (!mounted) return;
         setState(() {
@@ -62,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
 
-      // Logged in: fetch both
       final results = await Future.wait([
         _userService.getMe(),
         _tripService.getNearbyTrips(30.0444, 31.2357),
@@ -76,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (e) {
       if (e is DioException && e.response?.statusCode == 401) {
-        // Token invalid or expired → fallback to guest
         UserModel guestUser = UserModel.guest();
         List<TripModel> trips = [];
         try {
@@ -87,10 +81,9 @@ class _HomeScreenState extends State<HomeScreen> {
           _user = guestUser;
           _trips = trips;
           _isLoading = false;
-          _error = null; // clear error
+          _error = null; 
         });
       } else {
-        // Other errors (network, etc.)
         if (!mounted) return;
         setState(() {
           _error = e.toString();
@@ -115,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           HomeMap(
             trips: _trips,
-            userLat: 30.0444, // replace with actual user location
+            userLat: 30.0444, 
             userLng: 31.2357,
           ),
           SafeArea(

@@ -11,14 +11,13 @@ class TrackingMapPlaceholder extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Color(0xFFF1F8E9),
         image: DecorationImage(
-          image: NetworkImage('https:/placeholder.com/map'), // Real map will replace this
+          image: NetworkImage('https:/placeholder.com/map'), 
           fit: BoxFit.cover,
           opacity: 0.2,
         ),
       ),
       child: Stack(
         children: [
-          // Simulated path
           Positioned(
             top: 300,
             left: 100,

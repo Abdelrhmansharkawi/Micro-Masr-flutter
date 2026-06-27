@@ -37,14 +37,13 @@ class ProfileHeader extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const VerticalSpace(20),
-              // Profile Image with initials and verified badge
               Stack(
                 children: [
                   Container(
                     width: 90.aw,
                     height: 90.aw,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFB5D1B9), // Lighter green for avatar circle
+                      color: const Color(0xFFB5D1B9), 
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 4),
                     ),
@@ -94,7 +93,6 @@ class ProfileHeader extends StatelessWidget {
             ],
           ),
         ),
-        // Edit button
         PositionedDirectional(
           top: 40.ah,
           end: 20.aw,

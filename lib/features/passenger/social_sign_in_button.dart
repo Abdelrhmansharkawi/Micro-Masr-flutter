@@ -34,11 +34,14 @@ class SocialSignInButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              label,
-              style: context.bodyLargeTextStyle.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.colors.onSurface,
+            Flexible(
+              child: Text(
+                label,
+                style: context.bodyLargeTextStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: context.colors.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const HorizontalSpace(12),

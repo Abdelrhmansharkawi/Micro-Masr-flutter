@@ -52,7 +52,6 @@ class NearbyStationsSheet extends StatelessWidget {
       controller: scrollController,
       padding: EdgeInsets.symmetric(horizontal: 24.aw, vertical: 16.ah),
       children: [
-        // Drag handle
         Center(
           child: Container(
             width: 50.aw,
@@ -66,7 +65,6 @@ class NearbyStationsSheet extends StatelessWidget {
         const VerticalSpace(16),
         _buildHeader(context),
         const VerticalSpace(20),
-        // Dynamic trip cards
         if (trips.isEmpty)
           Padding(
             padding: EdgeInsets.symmetric(vertical: 20.ah),

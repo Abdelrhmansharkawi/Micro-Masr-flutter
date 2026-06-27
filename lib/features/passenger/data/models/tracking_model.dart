@@ -1,4 +1,3 @@
-// models/tracking_model.dart
 class VehicleTracking {
   final String plateNumber;
   final String model;

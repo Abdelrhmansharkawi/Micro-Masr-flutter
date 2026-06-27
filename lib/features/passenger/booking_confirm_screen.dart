@@ -43,17 +43,19 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
       );
 
       if (mounted) {
-        context.push(AppRouteConstants.passengerPayment, extra: {
-          'bookingId': booking['_id'],
-          'amount': booking['totalPrice'],
-        });
+        context.push(
+          AppRouteConstants.passengerPayment,
+          extra: {
+            'bookingId': booking['_id'],
+            'amount': booking['totalPrice'],
+            'bookingData': booking, 
+          },
+        );
       }
     } on DioException catch (e) {
-      // Extract the server's error message
       String message = 'Booking failed';
       if (e.response != null) {
         final data = e.response!.data;
-        // The server sends { status: 'fail', message: '...' }
         if (data is Map && data['message'] != null) {
           message = data['message'].toString();
         } else {
@@ -61,7 +63,6 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
               'Error ${e.response?.statusCode}: ${e.response?.statusMessage}';
         }
       }
-      // Log for debugging
       debugPrint('Booking error: $message');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -83,8 +84,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFF5F5F0), // Off-white background from image
+      backgroundColor: const Color(0xFFF5F5F0),
       body: SafeArea(
         child: Column(
           children: [

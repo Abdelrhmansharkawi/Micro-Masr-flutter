@@ -30,7 +30,6 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     final userData = json['user'] as Map<String, dynamic>;
 
-    // Helper to safely parse any value to int
     int _toInt(dynamic value) {
       if (value == null) return 0;
       if (value is int) return value;
@@ -39,7 +38,6 @@ class UserModel {
       return 0;
     }
 
-    // Helper to safely parse any value to double
     double _toDouble(dynamic value) {
       if (value == null) return 0.0;
       if (value is double) return value;
@@ -82,6 +80,6 @@ class UserModel {
     );
   }
 
-  // Fallback initial for avatar
+
   String get initial => fullName.isNotEmpty ? fullName[0] : '?';
 }

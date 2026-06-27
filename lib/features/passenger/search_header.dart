@@ -13,7 +13,7 @@ class SearchHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const HorizontalSpace(40), // Placeholder to center title
+        const HorizontalSpace(40), 
         Text(
           AppStrings.selectDestination,
           style: context.headlineLargeTextStyle.copyWith(

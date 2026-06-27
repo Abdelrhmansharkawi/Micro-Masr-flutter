@@ -57,7 +57,7 @@ class _StatPill extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.aw, vertical: 8.ah),
       decoration: BoxDecoration(
-        color: const Color(0xFF4A7450).withValues(alpha: 0.8), // Semi-transparent dark green
+        color: const Color(0xFF4A7450).withValues(alpha: 0.8), 
         borderRadius: BorderRadius.circular(20.ar),
       ),
       child: Row(

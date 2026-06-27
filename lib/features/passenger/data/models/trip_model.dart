@@ -1,6 +1,6 @@
 class TripLocation {
   final String? name;
-  final List<double> coordinates; // [lng, lat]
+  final List<double> coordinates; 
 
   TripLocation({
     this.name,
@@ -8,7 +8,6 @@ class TripLocation {
   });
 
   factory TripLocation.fromJson(Map<String, dynamic>? json) {
-    // If the whole object is null, return a default location
     if (json == null) {
       return TripLocation(coordinates: [0, 0]);
     }

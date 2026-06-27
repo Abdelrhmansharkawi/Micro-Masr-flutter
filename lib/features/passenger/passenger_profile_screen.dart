@@ -64,7 +64,6 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
       );
     }
 
-    // حالة الخطأ
     if (_error != null || _user == null) {
       return Scaffold(
         backgroundColor: const Color(0xFFF2EFE8),
@@ -109,7 +108,6 @@ class _PassengerProfileScreenState extends State<PassengerProfileScreen> {
               ),
             ),
 
-            // Menu Sections
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.aw),
               child: Column(

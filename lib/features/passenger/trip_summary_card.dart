@@ -43,7 +43,7 @@ class TripSummaryCard extends StatelessWidget {
             'Selected seats: ${selectedSeats.join(", ")}',
             style: context.bodyMediumTextStyle,
           ),
-          const VerticalSpace(12), //?
+          const VerticalSpace(12), 
           _buildMapPreview(context),
         ],
       ),

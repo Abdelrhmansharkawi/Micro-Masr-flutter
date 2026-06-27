@@ -59,7 +59,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
       final now = DateTime.now();
       final isToday =
           dt.year == now.year && dt.month == now.month && dt.day == now.day;
-      final timeFormat = DateFormat('h:mm a', 'en'); // or use Arabic 'ar'
+      final timeFormat = DateFormat('h:mm a', 'en'); 
       if (isToday) {
         return 'Today, ${timeFormat.format(dt)}';
       } else {
@@ -79,12 +79,13 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
     final departureTime = _formatDepartureTime(
         widget.bookingData['trip']?['departureTime']?.toString());
 
-    final tripId =
-        (widget.bookingData['trip'] as Map<String, dynamic>)['_id'] as String;
+    final tripId = widget.bookingData['trip'] is Map
+        ? widget.bookingData['trip']['_id']
+        : widget.bookingData['trip'];
 
     return Scaffold(
       backgroundColor:
-          const Color(0xFF558B2F), // Dark green background from image
+          const Color(0xFF558B2F), 
       body: SafeArea(
         child: Column(
           children: [
@@ -154,8 +155,8 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
         children: [
           AppButton(
             label: AppStrings.trackTrip,
-            onPressed: () => context.push(
-                AppRouteConstants.passengerTracking.replaceAll(':tripId', tripId)),
+            onPressed: () => context.push(AppRouteConstants.passengerTracking
+                .replaceAll(':tripId', tripId)),
           ),
           const VerticalSpace(12),
           AppButton.secondary(

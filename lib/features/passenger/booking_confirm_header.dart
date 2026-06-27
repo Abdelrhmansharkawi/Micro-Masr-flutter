@@ -29,7 +29,7 @@ class BookingConfirmHeader extends StatelessWidget {
             color: context.colors.primary,
           ),
         ),
-        const SizedBox(width: 40), // For centering title if needed
+        const SizedBox(width: 40), 
       ],
     );
   }

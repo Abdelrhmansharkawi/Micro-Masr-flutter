@@ -59,7 +59,6 @@ class RideCard extends StatelessWidget {
   }
 
   Widget _buildRouteTimeline(BuildContext context) {
-    // Use stops if available, otherwise use start and end names
     final List<String> stops = trip.stops.isNotEmpty
         ? trip.stops
         : [

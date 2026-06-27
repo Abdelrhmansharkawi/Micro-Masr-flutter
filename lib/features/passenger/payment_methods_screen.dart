@@ -3,19 +3,23 @@ import 'package:go_router/go_router.dart';
 import 'package:micromasr/core/size_extensions.dart';
 import 'package:micromasr/core/app_button.dart';
 import 'package:micromasr/core/app_route_constant.dart';
+import 'package:micromasr/core/payment_config.dart'; 
 import 'package:micromasr/features/passenger/profile_app_bar.dart';
 import 'package:micromasr/features/passenger/profile_payment_card.dart';
-import 'package:micromasr/features/passenger/data/services/booking_service.dart';
 import 'package:micromasr/features/passenger/data/services/payment_method_service.dart';
+import 'package:micromasr/features/passenger/data/services/payment_service.dart';
+import 'package:micromasr/features/passenger/paymob_webview.dart';
 
 class PaymentMethodsScreen extends StatefulWidget {
   final String? bookingId;
   final int? amount;
+  final Map<String, dynamic>? bookingData;
 
   const PaymentMethodsScreen({
     super.key,
     this.bookingId,
     this.amount,
+    this.bookingData,
   });
 
   @override
@@ -24,10 +28,11 @@ class PaymentMethodsScreen extends StatefulWidget {
 
 class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   final PaymentMethodService _methodService = PaymentMethodService();
-  final BookingService _bookingService = BookingService();
+  final PaymentService _paymentService = PaymentService();
   List<PaymentMethodModel> _methods = [];
   bool _isLoading = true;
   String? _selectedMethodId;
+  String? _selectedMethodType; 
   bool _isPaying = false;
 
   @override
@@ -49,6 +54,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           if (methods.isNotEmpty) defaultMethod = methods.first;
         }
         _selectedMethodId = defaultMethod?.id;
+        _selectedMethodType = defaultMethod?.type; 
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -59,24 +65,67 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     }
   }
 
-  Future<void> _pay() async {
-    if (widget.bookingId == null || _selectedMethodId == null) return;
+  String _getIntegrationIdForType(String type) {
+    switch (type) {
+      case 'card':
+        return PaymentConfig.cardIntegrationId;
+      case 'vodafone':
+      case 'fawry':
+        return PaymentConfig.walletIntegrationId;
+      default:
+        return PaymentConfig.cardIntegrationId;
+    }
+  }
+
+  Future<void> _payWithPaymob() async {
+    if (widget.bookingId == null || _selectedMethodId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يرجى اختيار وسيلة دفع')),
+      );
+      return;
+    }
+
+    if (_selectedMethodType == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('نوع وسيلة الدفع غير معروف')),
+      );
+      return;
+    }
+
+    final integrationId = _getIntegrationIdForType(_selectedMethodType!);
+    if (integrationId == 'YOUR_WALLET_INTEGRATION_ID' &&
+        (_selectedMethodType == 'vodafone' || _selectedMethodType == 'fawry')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يرجى إعداد معرف الدفع للمحفظة')),
+      );
+      return;
+    }
+
     setState(() => _isPaying = true);
     try {
-      final result = await _bookingService.payForBooking(
+      final result = await _paymentService.initiatePaymobPayment(
         bookingId: widget.bookingId!,
-        paymentMethodId: _selectedMethodId!,
+        integrationId: integrationId,
       );
+
       if (mounted) {
-        context.pushReplacement(
-          AppRouteConstants.passengerPaymentSuccess,
-          extra: result['booking'],
-        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PaymobWebView(
+              paymentToken: result['paymentToken'],
+              iframeId: result['iframeId'],
+              bookingId: widget.bookingId!,
+              bookingData: widget.bookingData ?? {},
+            ),
+          ),
+        ).then((_) {
+        });
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('فشل الدفع: $e')),
+          SnackBar(content: Text('فشل بدء الدفع: $e')),
         );
       }
     } finally {
@@ -246,8 +295,10 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                                 isSelected: _selectedMethodId == method.id,
                                 onTap: _isPaying
                                     ? () {}
-                                    : () => setState(
-                                        () => _selectedMethodId = method.id),
+                                    : () => setState(() {
+                                          _selectedMethodId = method.id;
+                                          _selectedMethodType = method.type;
+                                        }),
                               );
                             },
                           ),
@@ -261,9 +312,15 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                   ),
                   const SizedBox(height: 16),
                   AppButton(
-                    label: _isPaying ? 'جاري الدفع...' : 'تأكيد الدفع',
+                    label: _isPaying
+                        ? 'جاري الدفع...'
+                        : _selectedMethodType == null
+                            ? 'اختر وسيلة دفع'
+                            : 'ادفع عبر ${_selectedMethodType == 'card' ? 'البطاقة' : 'المحفظة'}',
                     onPressed: () {
-                      if (!_isPaying && _selectedMethodId != null) _pay();
+                      if (!_isPaying && _selectedMethodId != null) {
+                        _payWithPaymob();
+                      }
                     },
                   ),
                   const SizedBox(height: 20),

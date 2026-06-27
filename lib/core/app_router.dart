@@ -195,6 +195,8 @@ class AppRouter {
           return PaymentMethodsScreen(
             bookingId: data['bookingId'] as String,
             amount: data['amount'] as int,
+            bookingData:
+                data['bookingData'] as Map<String, dynamic>?, // <-- added
           );
         },
       ),
@@ -225,8 +227,8 @@ class AppRouter {
             vehicleInfo: extra?['vehicleInfo'] ?? '',
             totalPrice: (extra?['totalPrice'] as num?)?.toDouble() ?? 0,
             bookingId: extra?['bookingId'] ?? '',
-            tripDistance: extra?['tripDistance'] as String, 
-      durationMinutes: extra?['durationMinutes'] as int ,
+            tripDistance: extra?['tripDistance'] as String,
+            durationMinutes: extra?['durationMinutes'] as int,
           );
         },
       ),

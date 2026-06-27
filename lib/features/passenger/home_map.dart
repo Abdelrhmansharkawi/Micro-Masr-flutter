@@ -24,7 +24,7 @@ class HomeMap extends StatelessWidget {
         Offset latLngToScreen(double lat, double lng) {
           final x = width * (lng - minLng) / (maxLng - minLng);
           final y =
-              height * (1 - (lat - minLat) / (maxLat - minLat)); // invert Y
+              height * (1 - (lat - minLat) / (maxLat - minLat)); 
           return Offset(x, y);
         }
 

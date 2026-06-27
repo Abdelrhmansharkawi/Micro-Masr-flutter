@@ -51,7 +51,7 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
   Future<void> _endTrip() async {
-    if (_isEndingTrip) return; // Prevent double taps
+    if (_isEndingTrip) return; 
 
     setState(() {
       _isEndingTrip = true;
@@ -134,7 +134,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
               ],
             ),
           ),
-          // Added a loading overlay when ending the trip
           if (_isEndingTrip)
             Container(
               color: Colors.black.withValues(alpha: 0.3),

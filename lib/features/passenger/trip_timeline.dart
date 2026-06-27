@@ -8,21 +8,18 @@ import 'package:micromasr/features/passenger/data/models/trip_model.dart';
 
 
 class TripTimeline extends StatelessWidget {
-  final TripModel trip; // ADDED
+  final TripModel trip; 
   const TripTimeline({super.key, required this.trip});
 
   @override
   Widget build(BuildContext context) {
-    // Build list of stops with their order
     final List<Map<String, dynamic>> timelineItems = [];
-    // Start location
     timelineItems.add({
       'name': trip.startLocation.name ?? 'نقطة البداية',
       'time': 'الآن',
       'color': const Color(0xFF558B2F),
       'showLine': true,
     });
-    // Intermediate stops
     for (int i = 0; i < trip.stops.length; i++) {
       timelineItems.add({
         'name': trip.stops[i],
@@ -31,7 +28,6 @@ class TripTimeline extends StatelessWidget {
         'showLine': i < trip.stops.length - 1,
       });
     }
-    // End location
     final durationMinutes = trip.estimatedDuration ;
     final totalMinutes = durationMinutes;
     timelineItems.add({
@@ -69,7 +65,7 @@ class TripTimeline extends StatelessWidget {
               item['time'] as String,
               item['color'] as Color,
               item['showLine'] as bool,
-              index == 0, // isFirst
+              index == 0, 
             );
           }),
         ],

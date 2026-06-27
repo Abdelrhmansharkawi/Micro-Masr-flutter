@@ -37,7 +37,6 @@ class TripReviewScreen extends StatefulWidget {
 class _TripReviewScreenState extends State<TripReviewScreen> {
   final ReviewService _reviewService = ReviewService();
 
-  // Collected review data
   int _rating = 0;
   List<String> _selectedTags = [];
   double _tipAmount = 0;
@@ -87,7 +86,7 @@ class _TripReviewScreenState extends State<TripReviewScreen> {
       body: Column(
         children: [
           ReviewHeader(
-            tripDistance: widget.tripDistance, // You can make dynamic if needed
+            tripDistance: widget.tripDistance, 
             durationMinutes: widget.durationMinutes,
             price: widget.totalPrice.toInt(),
           ),

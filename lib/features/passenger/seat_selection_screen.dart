@@ -68,11 +68,11 @@ class _SeatSelectionScreenState extends State<SeatSelectionScreen> {
             Expanded(
               child: _loadingSeats
                   ? const Center(
-                      child: CircularProgressIndicator()) // NEW: loading state
+                      child: CircularProgressIndicator()) 
                   : BusLayout(
                       selectedSeats: _selectedSeats,
                       reservedSeats:
-                          _reservedSeats, // CHANGED: pass dynamic list
+                          _reservedSeats, 
                       onSeatToggled: _toggleSeat,
                       totalSeats: widget.trip.totalSeats,
                     ),

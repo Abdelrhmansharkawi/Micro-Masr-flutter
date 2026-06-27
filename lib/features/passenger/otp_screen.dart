@@ -28,7 +28,6 @@ class _OtpScreenState extends State<OtpScreen> {
         _isLoading = true;
       });
 
-      // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
 
       if (mounted) {
@@ -60,7 +59,6 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const VerticalSpace(40),
               OtpTimer(onResend: () {
-                // Dummy resend
               }),
               const Spacer(),
               AppButton(

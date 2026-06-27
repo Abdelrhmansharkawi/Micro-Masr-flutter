@@ -97,7 +97,6 @@ class _NotificationSettingsScreenState
             ),
             const VerticalSpace(24),
 
-            // تنبيهات الرحلات
             ProfileSection(
               title: 'تنبيهات الرحلات',
               children: [
@@ -121,7 +120,6 @@ class _NotificationSettingsScreenState
 
             const VerticalSpace(24),
 
-            // العروض والأخبار
             ProfileSection(
               title: 'العروض والأخبار',
               children: [
@@ -140,7 +138,6 @@ class _NotificationSettingsScreenState
 
             const VerticalSpace(24),
 
-            // طرق التنبيه
             ProfileSection(
               title: 'طرق التنبيه',
               children: [

@@ -8,7 +8,7 @@ class PaymobWebView extends StatefulWidget {
   final String paymentToken;
   final String iframeId;
   final String bookingId;
-  final Map<String, dynamic> bookingData; // to pass to success screen
+  final Map<String, dynamic> bookingData; 
 
   const PaymobWebView({
     super.key,
@@ -40,8 +40,6 @@ class _PaymobWebViewState extends State<PaymobWebView> {
           },
           onPageFinished: (url) {
             setState(() => _isLoading = false);
-            // If the iframe redirects to a success page, we can trigger polling
-            // or just wait for the user to close the webview.
           },
           onWebResourceError: (error) {
             print('WebView error: $error');
@@ -75,24 +73,48 @@ class _PaymobWebViewState extends State<PaymobWebView> {
   }
 
   void _handleClose() async {
-    // When user closes the webview, check payment status
-    if (!_paymentCompleted) {
-      final paymentService = PaymentService();
-      final status = await paymentService.getPaymentStatus(widget.bookingId);
+    if (_paymentCompleted) {
+      context.pop();
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFF9CCC65), 
+        ),
+      ),
+    );
+
+    final paymentService = PaymentService();
+    String status = 'pending';
+
+    for (int i = 0; i < 4; i++) {
+      status = await paymentService.getPaymentStatus(widget.bookingId);
+
       if (status == 'paid') {
-        _paymentCompleted = true;
-        if (mounted) {
-          context.pushReplacement(
-            AppRouteConstants.passengerPaymentSuccess,
-            extra: widget.bookingData,
-          );
-        }
-      } else {
-        // Still pending or failed – show a dialog
-        _showPaymentStatusDialog(status);
+        break;
+      }
+
+      await Future.delayed(const Duration(milliseconds: 1500));
+    }
+
+    if (mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+
+    if (status == 'paid') {
+      _paymentCompleted = true;
+      if (mounted) {
+        context.pushReplacement(
+          AppRouteConstants.passengerPaymentSuccess,
+          extra: widget.bookingData,
+        );
       }
     } else {
-      context.pop();
+      _showPaymentStatusDialog(status);
     }
   }
 
@@ -108,7 +130,7 @@ class _PaymobWebViewState extends State<PaymobWebView> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              context.pop(); // go back to previous screen
+              context.pop(); 
             },
             child: const Text('حسناً'),
           ),

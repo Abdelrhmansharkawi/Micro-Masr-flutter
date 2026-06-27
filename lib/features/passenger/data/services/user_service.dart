@@ -27,7 +27,6 @@ class UserService {
         {'user': updatedUser, 'unreadNotificationCount': 0, 'tripsCount': 0});
   }
 
-  // Change password
   Future<void> changePassword({
     required String currentPassword,
     required String newPassword,

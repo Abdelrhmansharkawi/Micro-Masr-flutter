@@ -34,7 +34,7 @@ class TrackingStatusStepper extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(steps.length * 2 - 1, (index) {
           if (index.isOdd) {
-            final i = index ~/ 2; // preceding step index
+            final i = index ~/ 2; 
             final isLineActive = i < activeStepIdx;
             return _buildLine(isLineActive, context);
           }
