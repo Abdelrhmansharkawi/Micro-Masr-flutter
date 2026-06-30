@@ -6,7 +6,6 @@ import 'package:micromasr/core/size_extensions.dart';
 import 'package:micromasr/core/app_route_constant.dart';
 import 'package:micromasr/core/vertical_space.dart';
 import 'package:micromasr/features/passenger/auth_divider.dart';
-import 'package:micromasr/features/passenger/social_sign_in_button.dart';
 import 'login_form.dart';
 
 class LoginBody extends StatelessWidget {
@@ -42,34 +41,13 @@ class LoginBody extends StatelessWidget {
               const VerticalSpace(24),
               const LoginForm(),
               const VerticalSpace(32),
-              const PassengerAuthDivider(text: 'أو'),
-              const VerticalSpace(24),
-              SocialSignInButton(
-                label: AppStrings.continueWithGoogle,
-                onPressed: () {},
-              ),
             ],
           ),
         ),
         const VerticalSpace(24),
-        _buildSkipButton(context),
         const VerticalSpace(32),
         _buildSignUpLink(context),
       ],
-    );
-  }
-
-  Widget _buildSkipButton(BuildContext context) {
-    return TextButton(
-      onPressed: () => context.go(AppRouteConstants.passengerHome),
-      child: Text(
-        AppStrings.skipAndGuest,
-        style: context.bodyLargeTextStyle.copyWith(
-          color: context.colors.primary,
-          fontWeight: FontWeight.bold,
-          decoration: TextDecoration.underline,
-        ),
-      ),
     );
   }
 
@@ -97,14 +75,3 @@ class LoginBody extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-

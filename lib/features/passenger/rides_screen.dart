@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:micromasr/core/context_extensions.dart';
 import 'package:micromasr/core/vertical_space.dart';
 import 'rides_header.dart';
@@ -8,7 +8,8 @@ import 'package:micromasr/features/passenger/data/models/trip_model.dart';
 import 'package:micromasr/features/passenger/data/services/trip_service.dart';
 
 class RidesScreen extends StatefulWidget {
-  const RidesScreen({super.key});
+  final String? searchQuery;
+  const RidesScreen({super.key, this.searchQuery});
 
   @override
   State<RidesScreen> createState() => _RidesScreenState();
@@ -26,11 +27,23 @@ class _RidesScreenState extends State<RidesScreen> {
     _loadTrips();
   }
 
+  @override
+  void didUpdateWidget(covariant RidesScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+      _loadTrips();
+    }
+  }
+
   Future<void> _loadTrips() async {
     try {
       final trips = await _tripService.searchTrips(
         from: '',
-        to: '',
+        to: widget.searchQuery ?? '',
         date: DateTime.now(),
       );
       if (mounted) {

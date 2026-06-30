@@ -1,30 +1,46 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:micromasr/core/models/map_pin.dart';
+import 'package:micromasr/core/widgets/live_trip_map.dart';
 
 class TripDetailMap extends StatelessWidget {
-  const TripDetailMap({super.key});
+  const TripDetailMap({
+    super.key,
+    this.startLat,
+    this.startLng,
+    this.endLat,
+    this.endLng,
+  });
+
+  final double? startLat;
+  final double? startLng;
+  final double? endLat;
+  final double? endLng;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        color: Color(0xFFDCEDC8),
-      ),
-      child: Center(
-        child: Icon(Icons.map_outlined, size: 100, color: Colors.white.withValues(alpha: 0.5)),
-      ),
+    final pins = <MapPin>[
+      if (startLat != null && startLng != null)
+        MapPin(
+          id: 'start',
+          latitude: startLat!,
+          longitude: startLng!,
+          type: MapPinType.pickup,
+          title: 'نقطة الانطلاق',
+        ),
+      if (endLat != null && endLng != null)
+        MapPin(
+          id: 'end',
+          latitude: endLat!,
+          longitude: endLng!,
+          type: MapPinType.dropoff,
+          title: 'الوجهة',
+        ),
+    ];
+
+    return LiveTripMap(
+      pins: pins,
+      initialLat: startLat,
+      initialLng: startLng,
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:micromasr/core/app_radius.dart';
 import 'package:micromasr/core/app_spacing.dart';
 import 'package:micromasr/core/app_strings.dart';
 import 'package:micromasr/core/context_extensions.dart';
@@ -65,20 +66,66 @@ class VehicleTypeDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = context.bodyLargeTextStyle.copyWith(
+      color: context.colors.onSurface,
+    );
+
     return DropdownButtonFormField<String>(
       initialValue: value,
-      hint: Text(AppStrings.vehicleType, style: context.bodyMediumTextStyle.copyWith(color: context.colors.textSecondary)),
+      isExpanded: true,
+      style: textStyle,
       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.directions_car_outlined, color: context.colors.textSecondary, size: 20.aw),
-        filled: true, fillColor: context.colors.surface,
-        contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.md.aw, vertical: AppSpacing.md.ah),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: context.colors.outline)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: context.colors.outline)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: context.colors.primary, width: 2)),
+        labelText: AppStrings.vehicleType,
+        labelStyle: context.bodyMediumTextStyle.copyWith(
+          color: context.colors.textSecondary,
+        ),
+        floatingLabelStyle: context.bodyMediumTextStyle.copyWith(
+          color: context.colors.primary,
+        ),
+        prefixIcon: Icon(
+          Icons.directions_car_outlined,
+          color: context.colors.textSecondary,
+          size: 20.aw,
+        ),
+        filled: true,
+        fillColor: context.colors.surface,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.md.aw,
+          vertical: AppSpacing.md.ah,
+        ),
+        border: _buildBorder(context.colors.outline),
+        enabledBorder: _buildBorder(context.colors.outline),
+        focusedBorder: _buildBorder(context.colors.primary, width: 2),
+        errorBorder: _buildBorder(context.colors.error),
+        focusedErrorBorder: _buildBorder(context.colors.error, width: 2),
       ),
-      items: items.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+      items: items
+          .map(
+            (t) => DropdownMenuItem(
+              value: t,
+              child: Text(
+                t,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: textStyle,
+              ),
+            ),
+          )
+          .toList(),
+      icon: Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: context.colors.textSecondary,
+        size: 20.aw,
+      ),
       onChanged: onChanged,
       validator: (v) => v == null ? 'مطلوب' : null,
+    );
+  }
+
+  OutlineInputBorder _buildBorder(Color color, {double width = 1.0}) {
+    return OutlineInputBorder(
+      borderRadius: AppRadius.smAll,
+      borderSide: BorderSide(color: color, width: width.aw),
     );
   }
 }
