@@ -11,7 +11,7 @@ class TrackingMapPlaceholder extends StatelessWidget {
       decoration: const BoxDecoration(
         color: Color(0xFFF1F8E9),
         image: DecorationImage(
-          image: NetworkImage('https:/placeholder.com/map'), 
+          image: NetworkImage('https://placeholder.com/map'), 
           fit: BoxFit.cover,
           opacity: 0.2,
         ),
@@ -37,14 +37,3 @@ class TrackingMapPlaceholder extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-

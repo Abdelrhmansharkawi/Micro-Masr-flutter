@@ -41,7 +41,12 @@ class TripDetailScreen extends StatelessWidget {
           final trip = snapshot.data!;
           return Stack(
             children: [
-              const TripDetailMap(),
+              TripDetailMap(
+                startLat: trip.startLat,
+                startLng: trip.startLng,
+                endLat: trip.endLocation.latitude,
+                endLng: trip.endLocation.longitude,
+              ),
               SafeArea(
                 child: Column(
                   children: [

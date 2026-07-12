@@ -101,7 +101,10 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: AppRouteConstants.passengerRides,
-                builder: (context, state) => const RidesScreen(),
+                builder: (context, state) {
+                  final query = state.uri.queryParameters['query'];
+                  return RidesScreen(searchQuery: query);
+                },
               ),
             ],
           ),

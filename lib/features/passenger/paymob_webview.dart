@@ -8,7 +8,7 @@ class PaymobWebView extends StatefulWidget {
   final String paymentToken;
   final String iframeId;
   final String bookingId;
-  final Map<String, dynamic> bookingData; 
+  final Map<String, dynamic> bookingData;
 
   const PaymobWebView({
     super.key,
@@ -83,7 +83,7 @@ class _PaymobWebViewState extends State<PaymobWebView> {
       barrierDismissible: false,
       builder: (context) => const Center(
         child: CircularProgressIndicator(
-          color: Color(0xFF9CCC65), 
+          color: Color(0xFF9CCC65),
         ),
       ),
     );
@@ -91,14 +91,16 @@ class _PaymobWebViewState extends State<PaymobWebView> {
     final paymentService = PaymentService();
     String status = 'pending';
 
-    for (int i = 0; i < 4; i++) {
+    // Poll for up to ~30 seconds to give the payment webhook time to arrive
+    // before we tell the user their payment failed.
+    for (int i = 0; i < 15; i++) {
       status = await paymentService.getPaymentStatus(widget.bookingId);
 
       if (status == 'paid') {
         break;
       }
 
-      await Future.delayed(const Duration(milliseconds: 1500));
+      await Future.delayed(const Duration(milliseconds: 2000));
     }
 
     if (mounted) {
@@ -130,7 +132,7 @@ class _PaymobWebViewState extends State<PaymobWebView> {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              context.pop(); 
+              context.pop();
             },
             child: const Text('حسناً'),
           ),

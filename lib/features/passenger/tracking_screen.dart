@@ -1,9 +1,12 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:micromasr/core/app_strings.dart';
 import 'package:micromasr/core/context_extensions.dart';
 import 'package:micromasr/core/app_route_constant.dart';
-import 'tracking_map_placeholder.dart';
+import 'package:micromasr/core/models/map_pin.dart';
+import 'package:micromasr/core/widgets/live_trip_map.dart';
 import 'tracking_status_stepper.dart';
 import 'tracking_driver_panel.dart';
 import 'data/services/tracking_service.dart';
@@ -28,21 +31,34 @@ class _TrackingScreenState extends State<TrackingScreen> {
   bool _isLoading = true;
   bool _isEndingTrip = false;
   String? _error;
+  Timer? _pollTimer;
 
   @override
   void initState() {
     super.initState();
     _fetchTrackingInfo();
+    _pollTimer = Timer.periodic(
+      const Duration(seconds: 10),
+      (_) => _fetchTrackingInfo(silent: true),
+    );
   }
 
-  Future<void> _fetchTrackingInfo() async {
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchTrackingInfo({bool silent = false}) async {
     try {
       final data = await _trackingService.getTrackingInfo(widget.tripId);
+      if (!mounted) return;
       setState(() {
         _trackingData = data;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted || silent) return;
       setState(() {
         _error = 'حدث خطأ أثناء تحميل البيانات';
         _isLoading = false;
@@ -50,8 +66,36 @@ class _TrackingScreenState extends State<TrackingScreen> {
     }
   }
 
+  List<MapPin> _buildMapPins(TrackingData data) {
+    return [
+      MapPin(
+        id: 'driver',
+        latitude: data.driverLocation.latitude,
+        longitude: data.driverLocation.longitude,
+        type: MapPinType.driver,
+        title: data.driver.fullName,
+      ),
+      if (data.pickupLocation != null)
+        MapPin(
+          id: 'pickup',
+          latitude: data.pickupLocation!.latitude,
+          longitude: data.pickupLocation!.longitude,
+          type: MapPinType.pickup,
+          title: 'نقطة الانطلاق',
+        ),
+      if (data.dropoffLocation != null)
+        MapPin(
+          id: 'dropoff',
+          latitude: data.dropoffLocation!.latitude,
+          longitude: data.dropoffLocation!.longitude,
+          type: MapPinType.dropoff,
+          title: 'الوجهة',
+        ),
+    ];
+  }
+
   Future<void> _endTrip() async {
-    if (_isEndingTrip) return; 
+    if (_isEndingTrip) return;
 
     setState(() {
       _isEndingTrip = true;
@@ -91,7 +135,6 @@ class _TrackingScreenState extends State<TrackingScreen> {
         );
       }
     } catch (e) {
-      print('End trip error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('فشل إنهاء الرحلة: $e')),
@@ -120,7 +163,10 @@ class _TrackingScreenState extends State<TrackingScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          const TrackingMapPlaceholder(),
+          LiveTripMap(
+            pins: _buildMapPins(data),
+            showMyLocation: true,
+          ),
           SafeArea(
             child: Column(
               children: [

@@ -48,7 +48,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           extra: {
             'bookingId': booking['_id'],
             'amount': booking['totalPrice'],
-            'bookingData': booking, 
+            'bookingData': booking,
           },
         );
       }
@@ -73,7 +73,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
       debugPrint('Unexpected error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Something went wrong')),
+          const SnackBar(content: Text('Something went wrong')),
         );
       }
     } finally {
@@ -128,6 +128,7 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
         children: [
           AppButton(
             label: AppStrings.confirmAndPay,
+            // Uses an empty block function instead of null to fit strict VoidCallback requirements
             onPressed: _isLoading
                 ? () {}
                 : () {
@@ -137,7 +138,12 @@ class _BookingConfirmScreenState extends State<BookingConfirmScreen> {
           const VerticalSpace(12),
           AppButton.text(
             label: AppStrings.cancel,
-            onPressed: () => context.pop(),
+            // Prevents popping the screen context while processing an API call
+            onPressed: _isLoading
+                ? () {}
+                : () {
+                    context.pop();
+                  },
           ),
         ],
       ),

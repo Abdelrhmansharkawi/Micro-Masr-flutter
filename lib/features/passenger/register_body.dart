@@ -5,7 +5,6 @@ import 'package:micromasr/core/context_extensions.dart';
 import 'package:micromasr/core/size_extensions.dart';
 import 'package:micromasr/core/vertical_space.dart';
 import 'package:micromasr/features/passenger/auth_divider.dart';
-import 'package:micromasr/features/passenger/social_sign_in_button.dart';
 import 'register_form.dart';
 
 class RegisterBody extends StatelessWidget {
@@ -47,13 +46,6 @@ class RegisterBody extends StatelessWidget {
           child: const RegisterForm(),
         ),
         const VerticalSpace(24),
-        const PassengerAuthDivider(text: 'أو'),
-        const VerticalSpace(24),
-        SocialSignInButton(
-          label: AppStrings.continueWithGoogle,
-          onPressed: () {},
-        ),
-        const VerticalSpace(32),
         _buildLoginLink(context),
         const VerticalSpace(32),
       ],
@@ -84,14 +76,3 @@ class RegisterBody extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-

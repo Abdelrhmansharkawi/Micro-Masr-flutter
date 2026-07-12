@@ -65,9 +65,14 @@ class LocationPoint {
   LocationPoint({required this.latitude, required this.longitude});
 
   factory LocationPoint.fromJson(Map<String, dynamic> json) {
+    // FIXED: Defensive parsing to prevent RangeError crashing if backend coordinates are empty
+    final coords = json['coordinates'] as List<dynamic>?;
+    if (coords == null || coords.length < 2) {
+      return LocationPoint(latitude: 0.0, longitude: 0.0);
+    }
     return LocationPoint(
-      latitude: json['coordinates'][1],
-      longitude: json['coordinates'][0],
+      latitude: (coords[1] as num).toDouble(),
+      longitude: (coords[0] as num).toDouble(),
     );
   }
 }

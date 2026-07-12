@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:micromasr/core/size_extensions.dart';
 import 'package:micromasr/core/app_button.dart';
 import 'package:micromasr/core/app_route_constant.dart';
-import 'package:micromasr/core/payment_config.dart'; 
+import 'package:micromasr/core/payment_config.dart';
 import 'package:micromasr/features/passenger/profile_app_bar.dart';
 import 'package:micromasr/features/passenger/profile_payment_card.dart';
 import 'package:micromasr/features/passenger/data/services/payment_method_service.dart';
@@ -32,7 +32,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   List<PaymentMethodModel> _methods = [];
   bool _isLoading = true;
   String? _selectedMethodId;
-  String? _selectedMethodType; 
+  String? _selectedMethodType;
   bool _isPaying = false;
 
   @override
@@ -54,7 +54,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           if (methods.isNotEmpty) defaultMethod = methods.first;
         }
         _selectedMethodId = defaultMethod?.id;
-        _selectedMethodType = defaultMethod?.type; 
+        _selectedMethodType = defaultMethod?.type;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,23 +78,19 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   }
 
   Future<void> _payWithPaymob() async {
-    if (widget.bookingId == null || _selectedMethodId == null) {
+    if (widget.bookingId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى اختيار وسيلة دفع')),
+        const SnackBar(content: Text('خطأ: رقم الحجز غير موجود')),
       );
       return;
     }
 
-    if (_selectedMethodType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('نوع وسيلة الدفع غير معروف')),
-      );
-      return;
-    }
+    // إذا لم يقم المستخدم باختيار وسيلة معينة، يتم الدفع افتراضياً عبر البطاقة 'card' مباشرة
+    final currentMethodType = _selectedMethodType ?? 'card';
+    final integrationId = _getIntegrationIdForType(currentMethodType);
 
-    final integrationId = _getIntegrationIdForType(_selectedMethodType!);
     if (integrationId == 'YOUR_WALLET_INTEGRATION_ID' &&
-        (_selectedMethodType == 'vodafone' || _selectedMethodType == 'fawry')) {
+        (currentMethodType == 'vodafone' || currentMethodType == 'fawry')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('يرجى إعداد معرف الدفع للمحفظة')),
       );
@@ -119,8 +115,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
               bookingData: widget.bookingData ?? {},
             ),
           ),
-        ).then((_) {
-        });
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -131,131 +126,6 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     } finally {
       if (mounted) setState(() => _isPaying = false);
     }
-  }
-
-  void _showAddMethodDialog() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            String methodType = 'card';
-            final cardNumberController = TextEditingController();
-            final expiryController = TextEditingController();
-            final cardHolderController = TextEditingController();
-            final phoneController = TextEditingController();
-            bool isDefault = false;
-            bool isSaving = false;
-
-            Future<void> save() async {
-              setModalState(() => isSaving = true);
-              try {
-                if (methodType == 'card') {
-                  final parts = expiryController.text.split('/');
-                  final month = int.parse(parts[0]);
-                  final year = int.parse(parts[1]);
-                  await _methodService.addCard(
-                    cardNumber: cardNumberController.text.trim(),
-                    expiryMonth: month,
-                    expiryYear: year,
-                    cardHolderName: cardHolderController.text.trim(),
-                    cardBrand: 'بطاقة',
-                    isDefault: isDefault,
-                  );
-                } else {
-                  await _methodService.addWallet(
-                    type: methodType,
-                    phoneNumber: phoneController.text.trim(),
-                    isDefault: isDefault,
-                  );
-                }
-                Navigator.pop(context);
-                _loadMethods();
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('فشل الحفظ: $e')),
-                );
-              } finally {
-                setModalState(() => isSaving = false);
-              }
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('إضافة وسيلة دفع جديدة',
-                        style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      value: methodType,
-                      items: const [
-                        DropdownMenuItem(
-                            value: 'card', child: Text('بطاقة ائتمان')),
-                        DropdownMenuItem(
-                            value: 'vodafone', child: Text('فودافون كاش')),
-                        DropdownMenuItem(value: 'fawry', child: Text('فوري')),
-                      ],
-                      onChanged: (v) => setModalState(() => methodType = v!),
-                      decoration:
-                          const InputDecoration(labelText: 'نوع الوسيلة'),
-                    ),
-                    const SizedBox(height: 16),
-                    if (methodType == 'card') ...[
-                      TextField(
-                          controller: cardNumberController,
-                          decoration:
-                              const InputDecoration(labelText: 'رقم البطاقة'),
-                          keyboardType: TextInputType.number),
-                      const SizedBox(height: 8),
-                      TextField(
-                          controller: expiryController,
-                          decoration: const InputDecoration(
-                              labelText: 'تاريخ الانتهاء (MM/YY)'),
-                          keyboardType: TextInputType.datetime),
-                      const SizedBox(height: 8),
-                      TextField(
-                          controller: cardHolderController,
-                          decoration: const InputDecoration(
-                              labelText: 'اسم حامل البطاقة')),
-                    ] else ...[
-                      TextField(
-                          controller: phoneController,
-                          decoration:
-                              const InputDecoration(labelText: 'رقم الهاتف'),
-                          keyboardType: TextInputType.phone),
-                    ],
-                    const SizedBox(height: 16),
-                    Row(children: [
-                      Checkbox(
-                          value: isDefault,
-                          onChanged: (v) =>
-                              setModalState(() => isDefault = v!)),
-                      const Text('تعيين كوسيلة دفع افتراضية'),
-                    ]),
-                    const SizedBox(height: 16),
-                    AppButton(
-                      label: isSaving ? 'جاري الحفظ...' : 'حفظ',
-                      onPressed: () {
-                        if (!isSaving) save();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -303,22 +173,12 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                             },
                           ),
                   ),
-                  AppButton(
-                    label: 'إضافة بطاقة جديدة',
-                    icon: Icons.add_circle_outline_rounded,
-                    onPressed: () {
-                      if (!_isPaying) _showAddMethodDialog();
-                    },
-                  ),
+                  // تم حذف زر "إضافة بطاقة جديدة" بناءً على طلبك
                   const SizedBox(height: 16),
                   AppButton(
-                    label: _isPaying
-                        ? 'جاري الدفع...'
-                        : _selectedMethodType == null
-                            ? 'اختر وسيلة دفع'
-                            : 'ادفع عبر ${_selectedMethodType == 'card' ? 'البطاقة' : 'المحفظة'}',
+                    label: _isPaying ? 'جاري الدفع...' : 'اذهب للدفع الآن',
                     onPressed: () {
-                      if (!_isPaying && _selectedMethodId != null) {
+                      if (!_isPaying) {
                         _payWithPaymob();
                       }
                     },
