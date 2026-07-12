@@ -2,7 +2,6 @@
 import 'package:micromasr/core/vertical_space.dart';
 import 'home_header.dart';
 import 'home_map.dart';
-import 'home_search_bar.dart';
 import 'nearby_stations_sheet.dart';
 import 'data/services/user_service.dart';
 import 'data/services/trip_service.dart';
@@ -53,9 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
         UserModel guestUser = UserModel.guest();
         List<TripModel> trips = [];
         try {
-          trips = await _tripService.getNearbyTrips(lat, lng);
-        } catch (_) {
-        }
+          trips = await _tripService.getNearbyTrips(lat, lng, distance: 500);
+        } catch (_) {}
         if (!mounted) return;
         setState(() {
           _user = guestUser;
@@ -69,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final results = await Future.wait([
         _userService.getMe(),
-        _tripService.getNearbyTrips(lat, lng),
+        _tripService.getNearbyTrips(lat, lng, distance: 500),
       ]);
 
       if (!mounted) return;
@@ -89,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
           trips = await _tripService.getNearbyTrips(
             location.latitude,
             location.longitude,
+            distance: 500,
           );
         } catch (_) {}
         if (!mounted) return;
@@ -130,16 +129,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  VerticalSpace(16),
+                  const VerticalSpace(16),
                   HomeHeader(
                     userName: user.firstName,
                     notificationCount: user.unreadNotificationCount,
                   ),
-                  VerticalSpace(16),
-                  HomeSearchBar(),
                 ],
               ),
             ),

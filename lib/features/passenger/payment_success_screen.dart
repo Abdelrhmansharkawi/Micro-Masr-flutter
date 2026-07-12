@@ -28,10 +28,11 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   }
 
   Future<void> _fetchUserName() async {
-    final bookingUser = widget.bookingData['user'] as Map<String, dynamic>?;
-    if (bookingUser != null && bookingUser['fullName'] != null) {
+    // التحقق بأمان من نوع حقل المستخدم قبل كاستينج الخريطة
+    final userField = widget.bookingData['user'];
+    if (userField is Map && userField['fullName'] != null) {
       setState(() {
-        _userName = bookingUser['fullName'];
+        _userName = userField['fullName'];
         _loadingName = false;
       });
       return;
@@ -74,18 +75,28 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     final bookingId = widget.bookingData['_id']?.toString() ?? 'N/A';
-    final tripRoute =
-        '${widget.bookingData['trip']?['startLocation']?['name'] ?? ''} ← ${widget.bookingData['trip']?['endLocation']?['name'] ?? ''}';
-    final departureTime = _formatDepartureTime(
-        widget.bookingData['trip']?['departureTime']?.toString());
+    
+    // قيم افتراضية آمنة لمنع الانهيار
+    String tripRoute = 'الرحلة المحجوزة';
+    String departureTime = 'Today, 9:00 AM';
+    String tripId = '';
 
-    final tripId = widget.bookingData['trip'] is Map
-        ? widget.bookingData['trip']['_id']
-        : widget.bookingData['trip'];
+    // التحقق بأمان من نوع حقل الرحلة (Trip) إن كان خريطة أم معرف نصي فقط
+    final tripField = widget.bookingData['trip'];
+    if (tripField is Map) {
+      final startName = tripField['startLocation']?['name'] ?? '';
+      final endName = tripField['endLocation']?['name'] ?? '';
+      if (startName.isNotEmpty && endName.isNotEmpty) {
+        tripRoute = '$startName ← $endName';
+      }
+      departureTime = _formatDepartureTime(tripField['departureTime']?.toString());
+      tripId = tripField['_id']?.toString() ?? '';
+    } else if (tripField is String) {
+      tripId = tripField;
+    }
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xFF558B2F), 
+      backgroundColor: const Color(0xFF558B2F), 
       body: SafeArea(
         child: Column(
           children: [
@@ -103,7 +114,7 @@ class _PaymentSuccessScreenState extends State<PaymentSuccessScreen> {
                     .copyWith(color: Colors.white.withValues(alpha: 0.8))),
             const VerticalSpace(40),
             Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: SuccessTripCard(
                   route: tripRoute,
                   departureTime: departureTime,

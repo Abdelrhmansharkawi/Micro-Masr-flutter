@@ -58,31 +58,23 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
               onSubmitted: _onSearch,
               decoration: InputDecoration(
                 hintText: AppStrings.whereToToday,
-                hintStyle: context.bodyLargeTextStyle.copyWith(color: context.colors.textSecondary),
+                hintStyle: context.bodyLargeTextStyle
+                    .copyWith(color: context.colors.textSecondary),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(vertical: 12.ah),
               ),
-              style: context.bodyLargeTextStyle.copyWith(color: context.colors.onSurface),
+              style: context.bodyLargeTextStyle
+                  .copyWith(color: context.colors.onSurface),
             ),
           ),
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () => _onSearch(_controller.text),
-            child: Icon(Icons.search, color: context.colors.textSecondary, size: 24.aw),
+            child: Icon(Icons.search,
+                color: context.colors.textSecondary, size: 24.aw),
           ),
         ],
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-

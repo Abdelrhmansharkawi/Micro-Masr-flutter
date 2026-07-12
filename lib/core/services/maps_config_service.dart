@@ -15,8 +15,9 @@ class MapsConfigService {
       if (key != null && key.isNotEmpty) {
         MapsConfig.setRuntimeKey(key);
       }
-    } catch (_) {
-      // Backend endpoint not ready yet — native keys in manifest are used.
+    } catch (e) {
+      // Temporary print statement to see the exact network failure reason
+      print("📍 MapsConfigService Error: $e");
     }
   }
 }

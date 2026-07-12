@@ -48,7 +48,7 @@ class AppStrings {
   static const String otpSentTo = 'تم إرسال الرمز إلى';
   static const String resendCode = 'إعادة إرسال الرمز';
   static const String resendIn = 'إعادة الإرسال بعد';
-  static const String dontHaveAccount = 'مش عندك حساب؟ ';
+  static const String dontHaveAccount = 'معندكش حساب؟ ';
   static const String alreadyHaveAccount = 'عندك حساب بالفعل؟ ';
   static const String invalidCredentials = 'رقم الهاتف أو كلمة مورور غلط';
   static const String otpExpired = 'انتهت صلاحية الرمز، اضغط إعادة الإرسال';
@@ -78,7 +78,7 @@ class AppStrings {
       "تابع رحلتك مباشرة وادفع بأمان بدون كاش";
 
   static const String home = 'الرئيسية';
-  static const String trips = 'رحلاتي';
+  static const String trips = 'الرجلات';
   static const String notifications = 'التنبيهات';
   static const String profile = 'حسابي';
 

@@ -193,7 +193,7 @@ class NearbyStationsSheet extends StatelessWidget {
       bottom: 24.ah,
       start: 24.aw,
       child: GestureDetector(
-        onTap: () => context.push(AppRouteConstants.passengerSearch),
+        onTap: () => context.push(AppRouteConstants.passengerRides),
         child: Container(
           padding: EdgeInsets.all(16.aw),
           decoration: const BoxDecoration(
